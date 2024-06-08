@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
+class RegistrationPage extends StatefulWidget {
   final VoidCallback toggleView;
 
-  const LoginPage({super.key, required this.toggleView});
+  const RegistrationPage({super.key, required this.toggleView});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   String _username = '';
+  String _email = '';
   String _password = '';
   bool _obscurePassword = true;
 
-  void _login() {
+  void _register() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Perform login logic here
-      print('Username: $_username, Password: $_password');
-      Navigator.pushNamed(context, '/home');
+      // Perform registration logic here
+      print('Username: $_username, Email: $_email, Password: $_password');
+      // Navigate to the login page or display a success message
+      widget.toggleView;
     }
   }
 
@@ -31,10 +33,10 @@ class _LoginPageState extends State<LoginPage> {
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             const Text(
-              'Login',
+              'Register',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -43,22 +45,43 @@ class _LoginPageState extends State<LoginPage> {
             const Divider(
               height: 30.0,
             ),
-            const SizedBox(height: 26),
+            const SizedBox(height: 16),
             TextFormField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                labelText: 'Username',
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                labelText: 'Name',
                 prefixIcon: const Icon(Icons.person),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return 'Please enter your username';
+                  return 'Please enter a name';
                 }
                 return null;
               },
               onSaved: (value) {
                 _username = value!;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                labelText: 'Email',
+                prefixIcon: const Icon(Icons.email),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter an email address';
+                }
+                // Add additional email validation if needed
+                return null;
+              },
+              onSaved: (value) {
+                _email = value!;
               },
             ),
             const SizedBox(height: 16),
@@ -76,24 +99,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   onPressed: () {
                     setState(() {
-                      _obscurePassword = !_obscurePassword; // Toggle visibility
+                      _obscurePassword = !_obscurePassword;
                     });
                   },
                 ),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return 'Please enter your password';
+                  return 'Please enter a password';
                 }
+                // Add additional password validation if needed
                 return null;
               },
               onSaved: (value) {
                 _password = value!;
               },
             ),
-            const SizedBox(height: 84),
+            const SizedBox(height: 24),
             OutlinedButton(
-              onPressed: _login,
+              onPressed: _register,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue,
@@ -106,13 +130,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               child: const Text(
-                'Login',
+                'Register',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             TextButton(
               onPressed: widget.toggleView,
-              child: const Text('Create a new account? Register here.'),
+              child: const Text('Already have an account? Login'),
             ),
           ],
         ),
