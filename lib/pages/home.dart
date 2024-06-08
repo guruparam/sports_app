@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   void logout() {
     print("logout");
-    Navigator.pushNamed(context, '/');
+    Navigator.pushNamed(context, '/auth');
   }
 
   @override
