@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sports_app/models/category.dart';
 import 'package:sports_app/components/curved_navigation_bar.dart';
+import 'package:sports_app/pages/account_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,12 +18,20 @@ void _getCategories() {
 
 class _HomePageState extends State<HomePage> {
   String selectedPage = '';
-   int _selectedIndex = 0;
+  int _selectedIndex = 0;
 
-   void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Navigate to AccountPage when account_circle is tapped
+    if (index == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AccountPage()),
+      );
+    }
   }
 
   void logout() {
@@ -40,11 +49,11 @@ class _HomePageState extends State<HomePage> {
         body: Column(
           children: [_tabBar()],
         ),
-          bottomNavigationBar: CurvedNavigationBarWidget(
+        bottomNavigationBar: CurvedNavigationBarWidget(
           selectedIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
+        ),
       ),
-    ),
     );
   }
 
