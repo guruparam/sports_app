@@ -32,8 +32,8 @@ class CurvedNavigationBarWidget extends StatelessWidget {
         animationDuration: const Duration(milliseconds: 300),
         items: const <Widget>[
           Icon(Icons.home, size: 30),
-          Icon(Icons.search, size: 30),
-          Icon(Icons.favorite, size: 30),
+          Icon(Icons.games, size: 30),
+          Icon(Icons.group, size: 30),
           Icon(Icons.account_circle, size: 30),
         ],
         index: selectedIndex,

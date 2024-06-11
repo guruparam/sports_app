@@ -81,7 +81,7 @@ class _AccountPageState extends State<AccountPage> {
               initialValue: '********',
               decoration: InputDecoration(
                 labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                       _obscureText ? Icons.visibility_off : Icons.visibility),

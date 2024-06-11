@@ -37,7 +37,7 @@ class _AuthPageState extends State<AuthPage> {
               child: Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 10.0),
+                    margin: const EdgeInsets.only(top: 5.0),
                     padding: const EdgeInsets.all(20.0),
                     child: const Image(
                       image: AssetImage("assets/images/logo.png"),
@@ -45,7 +45,8 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                   Card(
-                    elevation: 8,
+                    shadowColor: Colors.deepOrange,
+                    elevation: 15,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
