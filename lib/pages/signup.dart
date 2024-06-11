@@ -1,4 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import '../components/snackbar.dart';
+import '../services/service_api/users_api.dart';
 
 class RegistrationPage extends StatefulWidget {
   final VoidCallback toggleView;
@@ -11,18 +15,45 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-  String _username = '';
-  String _email = '';
-  String _password = '';
+  final _firstnameController = TextEditingController();
+  final _lastnameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Perform registration logic here
-      print('Username: $_username, Email: $_email, Password: $_password');
-      // Navigate to the login page or display a success message
-      widget.toggleView;
+
+      try {
+        // Make the API call to login
+        Response response = await UserAPI.instance.register(
+          _firstnameController.text,
+          _lastnameController.text,
+          _emailController.text,
+          _passwordController.text,
+        );
+
+        // Handle successful response
+        if (response.statusCode == 200) {
+          // Save token to secure storage
+          // Navigate to home screen
+          Navigator.pushNamed(context, '/auth');
+          showSnackbar(context, 'User created Successfully');
+        } else {
+          showSnackbar(context, 'Registration failed: ${response.data}');
+        }
+      } on DioException catch (e) {
+        // Handle error response
+        if (e.response != null && e.response!.statusCode == 400) {
+          showSnackbar(context, 'Registration failed: ${e.response!.data}');
+        } else {
+          // Handle network or other errors
+          showSnackbar(context, 'An error occurred: ${e.message}');
+        }
+      } catch (e) {
+        showSnackbar(context, 'An error Occurred: $e ');
+      }
     }
   }
 
@@ -47,11 +78,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _firstnameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                labelText: 'Name',
+                labelText: 'First Name',
                 prefixIcon: const Icon(Icons.person),
               ),
               validator: (value) {
@@ -60,12 +92,30 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 }
                 return null;
               },
-              onSaved: (value) {
-                _username = value!;
-              },
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _lastnameController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                labelText: 'Last Name',
+                prefixIcon: const Icon(Icons.person),
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
+              },
+              // onSaved: (value) {
+              //   _username = value!;
+              // },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _emailController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
@@ -80,12 +130,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 // Add additional email validation if needed
                 return null;
               },
-              onSaved: (value) {
-                _email = value!;
-              },
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -110,9 +158,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 }
                 // Add additional password validation if needed
                 return null;
-              },
-              onSaved: (value) {
-                _password = value!;
               },
             ),
             const SizedBox(height: 24),

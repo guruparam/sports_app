@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../components/snackbar.dart';
+import '../services/service_api/users_api.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback toggleView;
@@ -11,16 +17,37 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String _username = '';
-  String _password = '';
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   bool _obscurePassword = true;
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Perform login logic here
-      print('Username: $_username, Password: $_password');
-      Navigator.pushNamed(context, '/home');
+
+      try {
+        // Make the API call to login
+        Response response = await UserAPI.instance.login(
+          _email.text,
+          _password.text,
+        );
+
+        // Handle successful response
+        if (response.statusCode == 200) {
+          // Save token to secure storage
+          const storage = FlutterSecureStorage();
+          await storage.write(
+              key: 'token', value: response.data['access_token']);
+
+          // Navigate to home screen
+          Navigator.pushNamed(context, '/home');
+          showSnackbar(context, 'Login Successfully');
+        } else {
+          showSnackbar(context, 'Login failed: ${response.data['detail']}');
+        }
+      } catch (e) {
+        showSnackbar(context, 'An error Occurred: $e ');
+      }
     }
   }
 
@@ -45,24 +72,21 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 26),
             TextFormField(
+              controller: _email,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.0)),
-                labelText: 'Username',
+                labelText: 'Email',
                 prefixIcon: const Icon(Icons.person),
               ),
               validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter your username';
-                }
+                EmailValidator.validate(value!);
                 return null;
-              },
-              onSaved: (value) {
-                _username = value!;
               },
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _password,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -86,9 +110,6 @@ class _LoginPageState extends State<LoginPage> {
                   return 'Please enter your password';
                 }
                 return null;
-              },
-              onSaved: (value) {
-                _password = value!;
               },
             ),
             const SizedBox(height: 84),
