@@ -1,8 +1,10 @@
-import 'package:dio/dio.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 import '../components/snackbar.dart';
-import '../services/service_api/users_api.dart';
 
 class RegistrationPage extends StatefulWidget {
   final VoidCallback toggleView;
@@ -21,169 +23,152 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-  void _register() async {
+  void _register() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      try {
-        // Make the API call to login
-        Response response = await UserAPI.instance.register(
+      context.read<AuthBloc>().add(
+        RegisterEvent(
           _firstnameController.text,
           _lastnameController.text,
           _emailController.text,
           _passwordController.text,
-        );
-
-        // Handle successful response
-        if (response.statusCode == 200) {
-          // Save token to secure storage
-          // Navigate to home screen
-          Navigator.pushNamed(context, '/auth');
-          showSnackbar(context, 'User created Successfully');
-        } else {
-          showSnackbar(context, 'Registration failed: ${response.data}');
-        }
-      } on DioException catch (e) {
-        // Handle error response
-        if (e.response != null && e.response!.statusCode == 400) {
-          showSnackbar(context, 'Registration failed: ${e.response!.data}');
-        } else {
-          // Handle network or other errors
-          showSnackbar(context, 'An error occurred: ${e.message}');
-        }
-      } catch (e) {
-        showSnackbar(context, 'An error Occurred: $e ');
-      }
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            const Text(
-              'Register',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Divider(
-              height: 30.0,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _firstnameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                labelText: 'First Name',
-                prefixIcon: const Icon(Icons.person),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _lastnameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                labelText: 'Last Name',
-                prefixIcon: const Icon(Icons.person),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-              // onSaved: (value) {
-              //   _username = value!;
-              // },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter an email address';
-                }
-                // Add additional email validation if needed
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a password';
-                }
-                // Add additional password validation if needed
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            OutlinedButton(
-              onPressed: _register,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 8,
-                ),
-              ),
-              child: const Text(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccess) {
+          showSnackbar(context, 'User created successfully');
+          widget.toggleView(); // Navigate back to the login page
+        } else if (state is AuthFailure) {
+          showSnackbar(context, 'Registration failed: ${state.error}');
+        }
+      },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const Text(
                 'Register',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: widget.toggleView,
-              child: const Text('Already have an account? Login'),
-            ),
-          ],
+              const Divider(
+                height: 30.0,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _firstnameController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  labelText: 'First Name',
+                  prefixIcon: const Icon(Icons.person),
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _lastnameController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  labelText: 'Last Name',
+                  prefixIcon: const Icon(Icons.person),
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  labelText: 'Email',
+                  prefixIcon: const Icon(Icons.email),
+                ),
+                validator: (value) {
+                  if (value == null || !EmailValidator.validate(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: _register,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 8,
+                  ),
+                ),
+                child: const Text(
+                  'Register',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              TextButton(
+                onPressed: widget.toggleView,
+                child: const Text('Already have an account? Login here.'),
+              ),
+            ],
+          ),
         ),
       ),
     );
