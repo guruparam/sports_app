@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<LoginEvent>(_onLoginEvent);
     on<RegisterEvent>(_onRegisterEvent);
+    on<FetchProfile>(_onProfileEvent);
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -53,4 +54,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(e.toString()));
     }
   }
+
+  Future<void> _onProfileEvent(
+      FetchProfile event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      emit(AuthLoading());
+      final mList = await UserAPI.instance.fetchProfile();
+      emit(ProfileLoded(mList));
+      if (mList.error != null) {
+        emit(AuthFailure(mList.error!));
+      }
+    } on NetworkError {
+      emit(const AuthFailure("Failed to fetch data. is your device online?"));
+    }
+  }
+}
+
+class AuthLoaded {
 }

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/profile.dart';
+
 abstract class AuthState extends Equatable {
   const AuthState();
 
@@ -20,4 +22,11 @@ class AuthFailure extends AuthState {
 
   @override
   List<Object> get props => [error];
+}
+
+class NetworkError extends AuthState {}
+
+class ProfileLoded extends AuthState {
+  final Profiles profile;
+  const ProfileLoded(this.profile);
 }

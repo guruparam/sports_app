@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:sports_app/bloc/auth/auth_event.dart';
 import 'package:sports_app/bloc/services/dio_service.dart';
+import 'package:sports_app/models/profile.dart';
 
 class UserAPI {
   // Private constructor for the singleton pattern
@@ -32,6 +35,19 @@ class UserAPI {
         'password': password,
       },
     );
+  }
+
+  Future<Profiles> fetchProfile() async {
+    try {
+      Response response = await APIService.instance.request(
+        '/users/details', // Your login endpoint
+        DioMethod.get,
+      );
+      return Profiles.fromJson(response.data);
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return Profiles.withError("Data not found / check your Connection");
+    }
   }
 
   // Add other user-specific methods as needed

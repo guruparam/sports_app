@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sports_app/bloc/auth/auth_bloc.dart';
+import 'package:sports_app/bloc/auth/auth_event.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -9,10 +11,17 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   bool _obscureText = true;
+  final AuthBloc _authBloc = AuthBloc();
 
   void logout() {
     print("logout");
     Navigator.pushNamed(context, '/auth');
+  }
+
+  @override
+  void initState() {
+    _authBloc.add(const FetchProfile());
+    super.initState();
   }
 
   @override

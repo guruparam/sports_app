@@ -23,7 +23,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final MatchBloc _matchBloc = MatchBloc();
   final TournamentBloc _tournamentBloc = TournamentBloc();
-  // String? userId;
   String selectedPage = '';
   int _selectedIndex = 0;
 
@@ -44,15 +43,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Future<void> _loadUserId() async {
-  //   const storage = FlutterSecureStorage();
-  //   String? id = await storage.read(key: 'user_id');
-  //   setState(() {
-  //     userId = id;
-  //   });
-  //   print(userId);
-  // }
-  
   List<Category> categories = [];
 
   void _getCategories() {
@@ -63,7 +53,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
-    
 
     // Navigate to AccountPage when account_circle is tapped
     if (index == 3) {
@@ -86,7 +75,6 @@ class _HomePageState extends State<HomePage> {
     print("logout");
     Navigator.pushNamed(context, '/auth');
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -184,8 +172,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  
 
   DefaultTabController _tabBar() {
     return DefaultTabController(
@@ -314,14 +300,15 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             leading: const Icon(Icons.group),
             title: const Text('Groups'),
-             onTap: () {
-    setState(() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const GroupPage()),
-      );
-    });
-  },
+            onTap: () {
+              setState(() {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const GroupPage()),
+                );
+              });
+            },
           ),
         ],
       ),
@@ -436,5 +423,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }

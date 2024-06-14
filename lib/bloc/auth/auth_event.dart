@@ -28,3 +28,7 @@ class RegisterEvent extends AuthEvent {
   @override
   List<Object> get props => [firstname, lastname, email, password];
 }
+
+class FetchProfile extends AuthEvent {
+  const FetchProfile();
+}
