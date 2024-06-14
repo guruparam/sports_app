@@ -30,7 +30,7 @@ class _BuildCardState extends State<BuildCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -95,12 +95,12 @@ class _BuildCardState extends State<BuildCard> {
     );
   }
 
-  Widget _buildTeamInfo(String teamName, String? logoUrl) {
+Widget _buildTeamInfo(String teamName, String? logoUrl) {
     return Row(
       children: [
-        if (logoUrl != null)
           Image.network(
-            logoUrl,
+          logoUrl!,
+          // 'https://img.freepik.com/free-vector/white-abstract-background-design_23-2148825582.jpg?w=996&t=st=1718347476~exp=1718348076~hmac=5fc499b091d5b9ae465d402374f7a353bb9141d2e1e06b4d70561f7c8ffe71e9',
             width: 50,
             loadingBuilder: (BuildContext context, Widget child,
                 ImageChunkEvent? loadingProgress) {
@@ -108,20 +108,20 @@ class _BuildCardState extends State<BuildCard> {
                 return child;
               } else {
                 return Container(
-                  width: 40,
-                  height: 40,
-                  color: Colors.grey[200],
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  ),
+                width: 45,
+                height: 30,
+                color: const Color.fromARGB(255, 137, 134, 134),
                 );
               }
             },
+          errorBuilder:
+              (BuildContext context, Object exception, StackTrace? stackTrace) {
+            return Container(
+              width: 45,
+              height: 30,
+              color: const Color.fromARGB(255, 200, 200, 200),
+            );
+          },
           ),
         const SizedBox(width: 10),
         Text(

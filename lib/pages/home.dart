@@ -4,12 +4,15 @@ import 'package:sports_app/bloc/matches/match_bloc.dart';
 import 'package:sports_app/models/active_matches.dart';
 import 'package:sports_app/models/category.dart';
 import 'package:sports_app/components/curved_navigation_bar.dart';
+import 'package:sports_app/models/tournament.dart';
 import 'package:sports_app/pages/account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sports_app/pages/group_page.dart';
 
+import '../bloc/tournament/tournament_bloc.dart';
 import '../components/match_card.dart';
 import '../components/snackbar.dart';
+import '../components/tournament_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final MatchBloc _matchBloc = MatchBloc();
+  final TournamentBloc _tournamentBloc = TournamentBloc();
   // String? userId;
   String selectedPage = '';
   int _selectedIndex = 0;
@@ -28,8 +32,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     // _loadUserId;
-    _matchBloc.add(const GetMatchList());
     super.initState();
+    _getCategories();
+
+    // Trigger the API calls only if the state is initial
+    if (_matchBloc.state is MatchInitial) {
+      _matchBloc.add(const GetMatchList());
+    }
+    if (_tournamentBloc.state is TournamentInitial) {
+      _tournamentBloc.add(const GetTournaments());
+    }
   }
 
   // Future<void> _loadUserId() async {
@@ -101,22 +113,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 15.0,
               ),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 15.0),
-                    child: Text(
-                      'Active Tournaments',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25.0,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _tournamentDs()
             ],
           ),
         ),
@@ -124,6 +121,66 @@ class _HomePageState extends State<HomePage> {
           selectedIndex: _selectedIndex,
           onItemTapped: _onItemTapped,
         ),
+      ),
+    );
+  }
+
+  Expanded _tournamentDs() {
+    return Expanded(
+      child: BlocBuilder<TournamentBloc, TournamentState>(
+        builder: (context, state) {
+          if (state is TournamentLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is TournamentLoaded) {
+            return ListView(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 15.0),
+                  child: Text(
+                    'Ongoing Tournaments',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ),
+                ...state.activeTournaments.map((tournament) => BuildTCard(
+                      TLogoUrl: 'image',
+                      TName: tournament.name ?? '',
+                      start_date: tournament.startDate,
+                      end_date: tournament.endDate,
+                      points: tournament.userDetails.userPoints,
+                    )),
+                const SizedBox(
+                  height: 15.0,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 15.0),
+                  child: Text(
+                    'Upcoming Tournaments',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ),
+                ...state.upcomingTournaments.map((tournament) => BuildTCard(
+                      TLogoUrl: 'image',
+                      TName: tournament.name ?? '',
+                      start_date: tournament.startDate,
+                      end_date: tournament.endDate,
+                      points: tournament.userDetails.userPoints,
+                    )),
+              ],
+            );
+          } else if (state is TournamentError) {
+            return Center(child: Text(state.message!));
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }
@@ -179,7 +236,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           DrawerHeader(
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 90, 94, 98),
+              color: Color.fromARGB(255, 63, 88, 101),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +330,7 @@ class _HomePageState extends State<HomePage> {
 
   AppBar _appBar() {
     return AppBar(
-      backgroundColor: const Color.fromARGB(248, 46, 42, 42),
+      backgroundColor: Color.fromARGB(255, 63, 88, 101),
       elevation: 20.0,
       centerTitle: true,
       title: const Text(
@@ -306,7 +363,7 @@ class _HomePageState extends State<HomePage> {
         const Padding(
           padding: EdgeInsets.only(left: 15.0),
           child: Text(
-            'Active Matches',
+            'Matches',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25.0,
@@ -360,17 +417,19 @@ class _HomePageState extends State<HomePage> {
         itemCount: model.data!.length,
         itemBuilder: (context, index) {
           final match = model.data![index];
-          return SizedBox(
-            width: 320, // Set a fixed width for the BuildCard
-            child: BuildCard(
-              sportName: match.sportId ?? '',
-              tournament: match.tournament ?? '',
-              team1: match.matchDetails?.shortNameTeam1 ?? "",
-              team2: match.matchDetails?.shortNameTeam2 ?? "",
-              team1LogoUrl: match.matchDetails?.team1_logo,
-              team2LogoUrl: match.matchDetails?.team2_logo,
-              matchDate: "${match.startTime} | ${match.startDate}",
-              venue: match.venue ?? "",
+          return Center(
+            child: SizedBox(
+              width: 320, // Set a fixed width for the BuildCard
+              child: BuildCard(
+                sportName: match.sportId ?? '',
+                tournament: match.tournament ?? '',
+                team1: match.matchDetails?.shortNameTeam1 ?? "",
+                team2: match.matchDetails?.shortNameTeam2 ?? "",
+                team1LogoUrl: match.matchDetails?.team1_logo,
+                team2LogoUrl: match.matchDetails?.team2_logo,
+                matchDate: "${match.startTime} | ${match.startDate}",
+                venue: match.venue ?? "",
+              ),
             ),
           );
         },

@@ -20,9 +20,6 @@ void showSnackbar(BuildContext context, String message) {
       action: SnackBarAction(
         label: 'Dismiss',
         onPressed: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(message as SnackBar);
         },
         textColor: Colors.red,
       ),

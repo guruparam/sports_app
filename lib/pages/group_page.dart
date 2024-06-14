@@ -35,7 +35,9 @@ class _GroupPageState extends State<GroupPage> {
               const SizedBox(height: 15.0),
               _breadcrumbs(),
               const SizedBox(height: 15.0),
-              _groups(),
+              Expanded(
+                child: _groups(),
+              ),
             ],
           ),
         ),
@@ -51,7 +53,7 @@ class _GroupPageState extends State<GroupPage> {
 
   AppBar _appBar() {
     return AppBar(
-      backgroundColor: const Color.fromARGB(248, 46, 42, 42),
+      backgroundColor: const Color.fromARGB(255, 63, 88, 101),
       elevation: 20.0,
       centerTitle: true,
       title: const Text(
@@ -81,8 +83,7 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget _groups() {
-    return Expanded(
-      child: BlocProvider(
+    return BlocProvider(
         create: (_) => _groupBloc,
         child: BlocListener<GroupBloc, GroupState>(
           listener: (context, state) {
@@ -103,7 +104,6 @@ class _GroupPageState extends State<GroupPage> {
               }
             },
           ),
-        ),
       ),
     );
   }
@@ -116,23 +116,29 @@ class _GroupPageState extends State<GroupPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
-        columnSpacing: 20.0,
+        columnSpacing: 40.0,
         columns: const [
           DataColumn(
-            label: Text(
-              'Name',
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
+            label: Center(
+              child: Text(
+                'Name',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                ),
               ),
             ),
           ),
           DataColumn(
-            label: Text(
-              'Action',
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
+            label: Center(
+              child: Text(
+                'Action',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                ),
               ),
             ),
           ),
@@ -143,11 +149,17 @@ class _GroupPageState extends State<GroupPage> {
               Text(group.name ?? 'Unknown Group'),
             ),
             DataCell(
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to group details
-                },
-                child: const Text('View'),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate to group details
+                  },
+                  child: const Text(
+                    'View',
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ),
               ),
             ),
           ]);
