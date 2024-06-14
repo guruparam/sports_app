@@ -6,6 +6,7 @@ import 'package:sports_app/models/category.dart';
 import 'package:sports_app/components/curved_navigation_bar.dart';
 import 'package:sports_app/pages/account_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sports_app/pages/group_page.dart';
 
 import '../components/match_card.dart';
 import '../components/snackbar.dart';
@@ -256,12 +257,14 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             leading: const Icon(Icons.group),
             title: const Text('Groups'),
-            onTap: () {
-              setState(() {
-                selectedPage = 'Settings';
-                Navigator.of(context).pop();
-              });
-            },
+             onTap: () {
+    setState(() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const GroupPage()),
+      );
+    });
+  },
           ),
         ],
       ),
