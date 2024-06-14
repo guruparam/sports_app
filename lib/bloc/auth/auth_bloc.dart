@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 import 'package:dio/dio.dart';
-import '../services/service_api/users_api.dart';
+import 'auth_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
@@ -14,7 +14,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      Response response = await UserAPI.instance.login(event.email, event.password);
+      Response response =
+          await UserAPI.instance.login(event.email, event.password);
       if (response.statusCode == 200) {
         const storage = FlutterSecureStorage();
         await storage.write(key: 'token', value: response.data['access_token']);
@@ -27,7 +28,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onRegisterEvent(RegisterEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onRegisterEvent(
+      RegisterEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       Response response = await UserAPI.instance.register(

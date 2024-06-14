@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sports_app/bloc/matches/match_bloc.dart';
+import 'package:sports_app/models/active_matches.dart';
 import 'package:sports_app/models/category.dart';
 import 'package:sports_app/components/curved_navigation_bar.dart';
 import 'package:sports_app/pages/account_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../components/match_card.dart';
 import '../components/snackbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,20 +16,41 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-List<Category> categories = [];
-
-void _getCategories() {
-  categories = Category.getCategories();
-}
-
 class _HomePageState extends State<HomePage> {
+  final MatchBloc _matchBloc = MatchBloc();
+  // String? userId;
   String selectedPage = '';
   int _selectedIndex = 0;
+
+  // int _sportIndex = 0;
+
+  @override
+  void initState() {
+    // _loadUserId;
+    _matchBloc.add(const GetMatchList());
+    super.initState();
+  }
+
+  // Future<void> _loadUserId() async {
+  //   const storage = FlutterSecureStorage();
+  //   String? id = await storage.read(key: 'user_id');
+  //   setState(() {
+  //     userId = id;
+  //   });
+  //   print(userId);
+  // }
+  
+  List<Category> categories = [];
+
+  void _getCategories() {
+    categories = Category.getCategories();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    
 
     // Navigate to AccountPage when account_circle is tapped
     if (index == 3) {
@@ -36,10 +61,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // void _onTabtapped(int index) {
+  //   setState(() {
+  //     _sportIndex = index;
+  //   });
+
+  //   if (index == 1) {}
+  // }
+
   void logout() {
     print("logout");
     Navigator.pushNamed(context, '/auth');
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +83,39 @@ class _HomePageState extends State<HomePage> {
         appBar: _appBar(),
         drawer: _drawer(),
         body: Container(
-          color: Colors.blueGrey[300],
+          color: const Color.fromARGB(255, 163, 182, 192),
           child: Column(
             children: [
               _tabBar(),
+              const SizedBox(
+                height: 15.0,
+              ),
+              _matches(),
+              const Divider(
+                height: 10.0,
+                color: Colors.black,
+                endIndent: 10.0,
+                indent: 10.0,
+              ),
+              const SizedBox(
+                height: 15.0,
+              ),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      'Active Tournaments',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25.0,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -64,12 +127,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  
+
   DefaultTabController _tabBar() {
     return DefaultTabController(
       length: categories.length,
       child: Container(
         color: Colors.white,
         child: TabBar(
+          // onTap: _onTabtapped,
           labelPadding:
               const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           indicatorSize: TabBarIndicatorSize
@@ -229,4 +295,84 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  Column _matches() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.only(left: 15.0),
+          child: Text(
+            'Active Matches',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25.0,
+              color: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ),
+        ),
+        _buildListMatch(),
+      ],
+    );
+  }
+
+  Widget _buildListMatch() {
+    return BlocProvider(
+      create: (_) => _matchBloc,
+      child: BlocListener<MatchBloc, MatchState>(
+        listener: (context, state) {
+          if (state is MatchError) {
+            showSnackbar(context, state.message!);
+          }
+        },
+        child: BlocBuilder<MatchBloc, MatchState>(
+          builder: (context, state) {
+            if (state is MatchInitial) {
+              return _buildLoading();
+            } else if (state is MatchLoading) {
+              return _buildLoading();
+            } else if (state is MatchLoaded) {
+              return _buildCard(context, state.matchModel);
+            } else if (state is MatchError) {
+              return const Center(
+                  child: Text('Error loading matches')); // Show error message
+            } else {
+              return Container(); // Handle unexpected states
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildCard(BuildContext context, ActiveMatches model) {
+    return SizedBox(
+      height: 150,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: model.data!.length,
+        itemBuilder: (context, index) {
+          final match = model.data![index];
+          return SizedBox(
+            width: 320, // Set a fixed width for the BuildCard
+            child: BuildCard(
+              sportName: match.sportId ?? '',
+              tournament: match.tournament ?? '',
+              team1: match.matchDetails?.shortNameTeam1 ?? "",
+              team2: match.matchDetails?.shortNameTeam2 ?? "",
+              team1LogoUrl: match.matchDetails?.team1_logo,
+              team2LogoUrl: match.matchDetails?.team2_logo,
+              matchDate: "${match.startTime} | ${match.startDate}",
+              venue: match.venue ?? "",
+            ),
+          );
+        },
+      ),
+    );
+  }
+
 }

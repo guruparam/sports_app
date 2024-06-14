@@ -18,8 +18,12 @@ void showSnackbar(BuildContext context, String message) {
         borderRadius: BorderRadius.circular(10),
       ),
       action: SnackBarAction(
-        label: 'Undo',
-        onPressed: () {},
+        label: 'Dismiss',
+        onPressed: () {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(message as SnackBar);
+        },
         textColor: Colors.red,
       ),
     ),

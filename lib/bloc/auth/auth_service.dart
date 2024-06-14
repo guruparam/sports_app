@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:sports_app/services/dio_service.dart';
+import 'package:sports_app/bloc/services/dio_service.dart';
 
 class UserAPI {
   // Private constructor for the singleton pattern

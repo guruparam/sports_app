@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sports_app/pages/auth_page.dart';
 import 'package:sports_app/pages/home.dart';
-import 'bloc/auth_bloc.dart';
+import 'bloc/auth/auth_bloc.dart';
 
 void main() {
   runApp(const MyApp());

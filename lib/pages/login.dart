@@ -1,9 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:email_validator/email_validator.dart';
-import '../bloc/auth_bloc.dart';
-import '../bloc/auth_event.dart';
-import '../bloc/auth_state.dart';
+import '../bloc/auth/auth_bloc.dart';
+import '../bloc/auth/auth_event.dart';
+import '../bloc/auth/auth_state.dart';
 import '../components/snackbar.dart';
 
 class LoginPage extends StatefulWidget {
@@ -76,7 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
@@ -97,8 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     context.read<AuthBloc>().add(
-                      LoginEvent(_email.text, _password.text),
-                    );
+                          LoginEvent(_email.text, _password.text),
+                        );
                   }
                 },
                 style: OutlinedButton.styleFrom(
