@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sports_app/bloc/groups/group_bloc.dart';
 import 'package:sports_app/components/snackbar.dart';
 import 'package:sports_app/models/group.dart';
+import '../components/custom_app_bar.dart';
 
 class GroupPage extends StatefulWidget {
   const GroupPage({super.key});
@@ -26,7 +27,7 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: _appBar(),
+         appBar: const CustomAppBar(title: 'Groups'),
         body: Container(
           color: const Color.fromARGB(255, 163, 182, 192),
           padding: const EdgeInsets.all(16.0),
@@ -46,22 +47,6 @@ class _GroupPageState extends State<GroupPage> {
             _isModalOpen = true;
           }),
           child: const Icon(Icons.add),
-        ),
-      ),
-    );
-  }
-
-  AppBar _appBar() {
-    return AppBar(
-      backgroundColor: const Color.fromARGB(255, 63, 88, 101),
-      elevation: 20.0,
-      centerTitle: true,
-      title: const Text(
-        "Groups",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 30.0,
-          color: Colors.white,
         ),
       ),
     );
@@ -150,7 +135,7 @@ class _GroupPageState extends State<GroupPage> {
             ),
             DataCell(
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to group details
