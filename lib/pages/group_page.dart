@@ -27,7 +27,7 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-         appBar: const CustomAppBar(title: 'Groups'),
+        appBar: const CustomAppBar(title: 'Groups'),
         body: Container(
           color: const Color.fromARGB(255, 163, 182, 192),
           padding: const EdgeInsets.all(16.0),
@@ -45,6 +45,17 @@ class _GroupPageState extends State<GroupPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => setState(() {
             _isModalOpen = true;
+            showDialog(
+              context: context,
+              builder: (_) => AddGroupModal(
+                groupNameController: _groupNameController,
+                onSubmit: _handleAddGroup,
+                onClose: () => setState(() {
+                  _isModalOpen = false;
+                  Navigator.of(context).pop();
+                }),
+              ),
+            );
           }),
           child: const Icon(Icons.add),
         ),
@@ -69,26 +80,26 @@ class _GroupPageState extends State<GroupPage> {
 
   Widget _groups() {
     return BlocProvider(
-        create: (_) => _groupBloc,
-        child: BlocListener<GroupBloc, GroupState>(
-          listener: (context, state) {
-            if (state is GroupError) {
-              showSnackbar(context, state.message!);
+      create: (_) => _groupBloc,
+      child: BlocListener<GroupBloc, GroupState>(
+        listener: (context, state) {
+          if (state is GroupError) {
+            showSnackbar(context, state.message!);
+          }
+        },
+        child: BlocBuilder<GroupBloc, GroupState>(
+          builder: (context, state) {
+            if (state is GroupInitial || state is GroupLoading) {
+              return _buildLoading();
+            } else if (state is GroupLoaded) {
+              return _buildGroupTable(context, state.groupModel);
+            } else if (state is GroupError) {
+              return const Center(child: Text('Error loading groups'));
+            } else {
+              return Container();
             }
           },
-          child: BlocBuilder<GroupBloc, GroupState>(
-            builder: (context, state) {
-              if (state is GroupInitial || state is GroupLoading) {
-                return _buildLoading();
-              } else if (state is GroupLoaded) {
-                return _buildGroupTable(context, state.groupModel);
-              } else if (state is GroupError) {
-                return const Center(child: Text('Error loading groups'));
-              } else {
-                return Container();
-              }
-            },
-          ),
+        ),
       ),
     );
   }
@@ -153,15 +164,16 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
-  // void _handleAddGroup() {
-  //   if (_groupNameController.text.isNotEmpty) {
-  //     _groupBloc.add(AddGroup(_groupNameController.text));
-  //     _groupNameController.clear();
-  //     setState(() {
-  //       _isModalOpen = false;
-  //     });
-  //   }
-  // }
+  void _handleAddGroup() {
+    if (_groupNameController.text.isNotEmpty) {
+      _groupBloc.add(AddGroup(_groupNameController.text));
+      _groupNameController.clear();
+      setState(() {
+        _isModalOpen = false;
+        Navigator.of(context).pop();
+      });
+    }
+  }
 
   @override
   void dispose() {
