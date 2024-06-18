@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sports_app/bloc/auth/auth_bloc.dart';
 import 'package:sports_app/bloc/auth/auth_event.dart';
 
+import '../components/custom_app_bar.dart';
+
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
@@ -26,19 +28,13 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 63, 88, 101),
-        title: const Text(
-          'Profile',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
-        ),
+       return Scaffold(
+      appBar: CustomAppBar(
+        title: 'Profile',
+        showBackButton: true,
+        onBackButtonPressed: () {
+          Navigator.pushNamed(context, '/home');
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

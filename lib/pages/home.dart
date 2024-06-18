@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sports_app/pages/group_page.dart';
 
 import '../bloc/tournament/tournament_bloc.dart';
+import '../components/custom_app_bar.dart';
 import '../components/match_card.dart';
 import '../components/snackbar.dart';
 import '../components/tournament_card.dart';
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
     _getCategories();
     return SafeArea(
       child: Scaffold(
-        appBar: _appBar(),
+       appBar: const CustomAppBar(title: 'PTW'),
         drawer: _drawer(),
         body: Container(
           color: const Color.fromARGB(255, 163, 182, 192),
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
       child: BlocBuilder<TournamentBloc, TournamentState>(
         builder: (context, state) {
           if (state is TournamentLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (state is TournamentLoaded) {
             return ListView(
               children: [
@@ -311,34 +312,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-      ),
-    );
-  }
-
-  AppBar _appBar() {
-    return AppBar(
-      backgroundColor: Color.fromARGB(255, 63, 88, 101),
-      elevation: 20.0,
-      centerTitle: true,
-      title: const Text(
-        "PTW",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 30.0,
-          color: Colors.white,
-        ),
-      ),
-      leading: IconTheme(
-        data: const IconThemeData(
-          size: 30.0,
-          color: Colors.white,
-        ),
-        child: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
       ),
     );
   }
