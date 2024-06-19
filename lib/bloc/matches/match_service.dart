@@ -16,7 +16,7 @@ class MatchAPI {
 
     try {
       Response response = await APIService.instance.request(
-        '/users/$userId/matches', // Your login endpoint
+        '/users/$userId/matches/', // Your login endpoint
         DioMethod.get,
       );
       return ActiveMatches.fromJson(response.data);

@@ -24,9 +24,9 @@ class _BuildTCardState extends State<BuildTCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 8.0),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

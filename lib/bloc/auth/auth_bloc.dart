@@ -70,6 +70,3 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 }
-
-class AuthLoaded {
-}

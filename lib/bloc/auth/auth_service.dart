@@ -40,7 +40,7 @@ class UserAPI {
   Future<Profiles> fetchProfile() async {
     try {
       Response response = await APIService.instance.request(
-        '/users/details', // Your login endpoint
+        '/users/details/', // Your login endpoint
         DioMethod.get,
       );
       return Profiles.fromJson(response.data);

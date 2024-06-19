@@ -14,7 +14,7 @@ class GroupAPI {
 
     try {
       Response response = await APIService.instance.request(
-        '/users/$userId/groups',
+        '/users/${userId}/groups/', // Your login endpoint
         DioMethod.get,
       );
       return GroupModel.fromJson(response.data);
@@ -30,14 +30,15 @@ class GroupAPI {
 
     try {
       Response response = await APIService.instance.request(
-        '/users/$userId/groups',
+        '/users/$userId/groups/',
         DioMethod.post,
         param: {'name': groupName},
       );
       return GroupModel.fromJson(response.data);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
-      return GroupModel.withError("Failed to add group / check your Connection");
+      return GroupModel.withError(
+          "Failed to add group / check your Connection");
     }
   }
 }

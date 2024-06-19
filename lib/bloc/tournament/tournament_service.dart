@@ -12,7 +12,7 @@ class TournamentAPI {
   Future<Tournament> fetchTournaments() async {
     try {
       Response response = await APIService.instance.request(
-        '/tournaments', // Your login endpoint
+        '/tournaments/', // Your login endpoint
         DioMethod.get,
       );
       return Tournament.fromJson(response.data);

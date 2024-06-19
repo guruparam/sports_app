@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BuildCard extends StatefulWidget {
@@ -98,31 +99,31 @@ class _BuildCardState extends State<BuildCard> {
 Widget _buildTeamInfo(String teamName, String? logoUrl) {
     return Row(
       children: [
-          Image.network(
-          logoUrl!,
-          // 'https://img.freepik.com/free-vector/white-abstract-background-design_23-2148825582.jpg?w=996&t=st=1718347476~exp=1718348076~hmac=5fc499b091d5b9ae465d402374f7a353bb9141d2e1e06b4d70561f7c8ffe71e9',
-            width: 50,
-            loadingBuilder: (BuildContext context, Widget child,
-                ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              } else {
-                return Container(
-                width: 45,
-                height: 30,
+        logoUrl != null && logoUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: logoUrl,
+                width: 50,
+                height: 28,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: 50,
+                  height: 28,
+                  color: const Color.fromARGB(255, 137, 134, 134),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: 50,
+                  height: 28,
+                  color: const Color.fromARGB(255, 137, 134, 134),
+                  child: Icon(Icons.error, color: Colors.white),
+                ),
+              )
+            : Container(
+                width: 50,
+                height: 28,
                 color: const Color.fromARGB(255, 137, 134, 134),
-                );
-              }
-            },
-          errorBuilder:
-              (BuildContext context, Object exception, StackTrace? stackTrace) {
-            return Container(
-              width: 45,
-              height: 30,
-              color: const Color.fromARGB(255, 200, 200, 200),
-            );
-          },
-          ),
+                child: Icon(Icons.image_not_supported, color: Colors.white),
+              ),
         const SizedBox(width: 10),
         Text(
           teamName,

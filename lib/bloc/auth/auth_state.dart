@@ -28,5 +28,7 @@ class NetworkError extends AuthState {}
 
 class ProfileLoded extends AuthState {
   final Profiles profile;
+
+  // Data data;
   const ProfileLoded(this.profile);
 }

@@ -4,6 +4,7 @@ import 'package:sports_app/bloc/groups/group_bloc.dart';
 import 'package:sports_app/components/snackbar.dart';
 import 'package:sports_app/models/group.dart';
 import '../components/custom_app_bar.dart';
+import 'package:expandable_datatable/expandable_datatable.dart';
 
 class GroupPage extends StatefulWidget {
   const GroupPage({super.key});
@@ -112,6 +113,7 @@ class _GroupPageState extends State<GroupPage> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
+        // dataRowColor: ,
         columnSpacing: 40.0,
         columns: const [
           DataColumn(
