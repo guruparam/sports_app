@@ -109,12 +109,11 @@ class _GroupPageState extends State<GroupPage> {
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildGroupTable(BuildContext context, GroupModel model) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+Widget _buildGroupTable(BuildContext context, GroupModel model) {
+  return SingleChildScrollView(
+    child: Center(
       child: DataTable(
-        // dataRowColor: ,
-        columnSpacing: 40.0,
+        columnSpacing: 50.0,
         columns: const [
           DataColumn(
             label: Center(
@@ -123,7 +122,7 @@ class _GroupPageState extends State<GroupPage> {
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
+                  fontSize: 20.0,
                 ),
               ),
             ),
@@ -135,7 +134,7 @@ class _GroupPageState extends State<GroupPage> {
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
+                  fontSize: 20.0,
                 ),
               ),
             ),
@@ -163,8 +162,9 @@ class _GroupPageState extends State<GroupPage> {
           ]);
         }).toList(),
       ),
-    );
-  }
+    ),
+  );
+}
 
   void _handleAddGroup() {
     if (_groupNameController.text.isNotEmpty) {

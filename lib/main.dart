@@ -6,6 +6,8 @@ import 'package:sports_app/pages/home.dart';
 import 'bloc/auth/auth_bloc.dart';
 import 'package:sports_app/pages/group_page.dart';
 import 'bloc/matches/match_bloc.dart';
+import 'package:sports_app/pages/rules_page.dart';
+import 'package:sports_app/pages/faq_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
           '/auth': (context) => const AuthPage(),
           '/home': (context) => const HomePage(),
           '/groups': (context) => const GroupPage(),
+          '/rules': (context) =>const  RulesPage(),
+          '/faqs': (context) =>const FAQsPage(),
         },
       ),
     );

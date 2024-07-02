@@ -14,6 +14,10 @@ import '../components/custom_app_bar.dart';
 import '../components/match_card.dart';
 import '../components/snackbar.dart';
 import '../components/tournament_card.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sports_app/pages/rules_page.dart';
+import 'package:sports_app/pages/faq_page.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   final TournamentBloc _tournamentBloc = TournamentBloc();
   String selectedPage = '';
   int _selectedIndex = 0;
+  final RefreshController _refreshController = RefreshController();
 
   // int _sportIndex = 0;
 
@@ -77,36 +82,34 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushNamed(context, '/auth');
   }
 
+  
   @override
   Widget build(BuildContext context) {
-    _getCategories();
     return SafeArea(
       child: Scaffold(
-       appBar: const CustomAppBar(title: 'PTW'),
+        appBar: const CustomAppBar(title: 'PTW'),
         drawer: _drawer(),
-        body: Container(
-          color: const Color.fromARGB(255, 163, 182, 192),
-          child: Column(
-            children: [
-              _tabBar(),
-              // const TabBarView(children: [
-
-              // ]),
-              const SizedBox(
-                height: 15.0,
-              ),
-              _matches(),
-              const Divider(
-                height: 10.0,
-                color: Colors.black,
-                endIndent: 10.0,
-                indent: 10.0,
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              _tournamentDs()
-            ],
+        body: SmartRefresher(
+          enablePullDown: true,
+          onRefresh: _onRefresh,
+          controller: _refreshController,
+          child: Container(
+            color: const Color.fromARGB(255, 163, 182, 192),
+            child: Column(
+              children: [
+                _tabBar(),
+                const SizedBox(height: 15.0),
+                _matches(),
+                const Divider(
+                  height: 10.0,
+                  color: Colors.black,
+                  endIndent: 10.0,
+                  indent: 10.0,
+                ),
+                const SizedBox(height: 15.0),
+                _tournamentDs(),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: CurvedNavigationBarWidget(
@@ -115,6 +118,19 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+
+  void _onRefresh() {
+    // Perform actions to refresh data here
+    // For example, you might want to fetch new data or update existing data
+    // Call setState if needed to update UI after refreshing
+    setState(() {
+      // Update your data or UI state here
+    });
+
+    // End refresh indicator when done
+    _refreshController.refreshCompleted();
   }
 
   Expanded _tournamentDs() {
@@ -314,6 +330,32 @@ class _HomePageState extends State<HomePage> {
               });
             },
           ),
+           ListTile(
+          leading: const Icon(Icons.rule),
+          title: const Text('Rules'),
+          onTap: () {
+            setState(() {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>const RulesPage()),
+              );
+            });
+          },
+        ),
+        ListTile(
+  leading: const Icon(Icons.help_outline),
+  title: const Text('FAQs'),
+  onTap: () {
+    setState(() {
+    Navigator.of(context).pop();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>const FAQsPage()),
+    );
+  });
+  },
+),
         ],
       ),
     );
